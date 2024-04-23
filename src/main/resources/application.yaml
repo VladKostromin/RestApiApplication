@@ -1,0 +1,16 @@
+server:
+  port: 8087
+
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
+    username: root
+    password: qaz923923
+  flyway:
+    url: jdbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
+    user: root
+    password: qaz923923
+    locations: db/migration
+jwt:
+  secret: stjgJYvZsQjkH69IX2prakSSIgd0Iygi
+  expiration: 4000
