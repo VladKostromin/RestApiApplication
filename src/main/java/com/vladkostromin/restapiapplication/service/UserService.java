@@ -43,6 +43,23 @@ public class UserService {
                         .build()
         );
     }
+    public Mono<Void> deleteUser(Long id) {
+        return userRepository.deleteById(id);
+    }
+
+    public Mono<UserEntity> safeDeleteUser(Long id) {
+        return userRepository
+                .findById(id)
+                .flatMap(userEntity -> {
+                    userEntity.setStatus(Status.INACTIVE);
+                    return userRepository.save(userEntity);
+                });
+    }
+
+    public Mono<UserEntity> updateUser(UserEntity user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
 
 
 }

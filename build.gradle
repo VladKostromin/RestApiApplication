@@ -43,6 +43,9 @@ dependencies {
 
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+
+    implementation(platform("software.amazon.awssdk:bom:$amazonSdk"))
+    implementation("software.amazon.awssdk:s3")
 }
 
 tasks.named('test') {

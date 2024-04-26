@@ -3,6 +3,7 @@ package com.vladkostromin.restapiapplication.config;
 import com.vladkostromin.restapiapplication.security.AuthenticationManager;
 import com.vladkostromin.restapiapplication.security.BearerTokenServerAuthenticationConverter;
 import com.vladkostromin.restapiapplication.security.JwtHandler;
+import com.vladkostromin.restapiapplication.service.AWSS3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import reactor.core.publisher.Mono;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.S3AsyncClientBuilder;
 
 @Slf4j
 @Configuration
@@ -28,6 +35,12 @@ public class SecurityConfig {
 
     @Value("${jwt.secret}")
     private String secret;
+
+
+    @Value("${aws.accessKey}")
+    private String accessKey;
+    @Value("${aws.secretKey}")
+    private String secretKey;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
@@ -57,6 +70,18 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public S3AsyncClient amazonAsyncClient (AwsCredentialsProvider awsCredentialsProvider, @Value("${aws.region}") String region) {
+        return S3AsyncClient.builder()
+                .credentialsProvider(awsCredentialsProvider)
+                .region(Region.of(region))
+                .build();
+    }
+    @Bean
+    public AwsCredentialsProvider awsCredentialsProvider() {
+        return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
     }
 
     private AuthenticationWebFilter authenticationWebFilter(AuthenticationManager authenticationManager) {

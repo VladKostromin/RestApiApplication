@@ -15,10 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseEntity {
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     @Id
     private Long id;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private Status status;
 }

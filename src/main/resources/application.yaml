@@ -14,3 +14,8 @@ spring:
 jwt:
   secret: stjgJYvZsQjkH69IX2prakSSIgd0Iygi
   expiration: 4000
+aws:
+  accessKey:
+  secretKey:
+  region: CENTRAL_EU_1
+  bucket:
