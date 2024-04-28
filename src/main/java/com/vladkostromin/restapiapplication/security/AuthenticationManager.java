@@ -1,8 +1,9 @@
 package com.vladkostromin.restapiapplication.security;
 
 
-import com.vladkostromin.restapiapplication.enums.Status;
-import com.vladkostromin.restapiapplication.exception.UnauthorizedException;
+
+import com.vladkostromin.restapiapplication.enums.UserStatus;
+import com.vladkostromin.restapiapplication.exception.InactiveException;
 import com.vladkostromin.restapiapplication.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -20,8 +21,8 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     public Mono<Authentication> authenticate(Authentication authentication) {
         String username = authentication.getName();
         return userService.getUserByUsername(username)
-                .filter(user -> user.getStatus().equals(Status.ACTIVE))
-                .switchIfEmpty(Mono.error(new UnauthorizedException("User is inactive")))
+                .filter(user -> user.getStatus().equals(UserStatus.ACTIVE))
+                .switchIfEmpty(Mono.error(new InactiveException("User is inactive", "ERROR_CODE_INACTIVE")))
                 .map(user -> authentication);
     }
 }

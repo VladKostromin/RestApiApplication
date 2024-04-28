@@ -1,5 +1,5 @@
 package com.vladkostromin.restapiapplication.enums;
 
-public enum Status {
-    ACTIVE, INACTIVE
+public enum UserStatus {
+    ACTIVE, BANNED, DELETED
 }

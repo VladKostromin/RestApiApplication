@@ -1,11 +1,11 @@
 package com.vladkostromin.restapiapplication.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.vladkostromin.restapiapplication.entity.EventEntity;
 import com.vladkostromin.restapiapplication.enums.Role;
-import com.vladkostromin.restapiapplication.enums.Status;
+import com.vladkostromin.restapiapplication.enums.UserStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +13,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserDto extends BaseDto{
     private String username;
@@ -21,7 +22,8 @@ public class UserDto extends BaseDto{
     private String firstName;
     private String lastName;
     private String email;
-    private Status status;
+    private UserStatus status;
     private Role role;
-    private List<EventEntity> events;
+    private List<EventDto> events;
+
 }

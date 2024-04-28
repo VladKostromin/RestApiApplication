@@ -37,10 +37,12 @@ public class SecurityConfig {
     private String secret;
 
 
-    @Value("${aws.accessKey}")
+    @Value("${aws.credentials.accessKey}")
     private String accessKey;
-    @Value("${aws.secretKey}")
+    @Value("${aws.credentials.secretKey}")
     private String secretKey;
+    @Value("${aws.bucket.region}")
+    private String region;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
@@ -73,15 +75,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public S3AsyncClient amazonAsyncClient (AwsCredentialsProvider awsCredentialsProvider, @Value("${aws.region}") String region) {
+    public S3AsyncClient amazonAsyncClient () {
         return S3AsyncClient.builder()
-                .credentialsProvider(awsCredentialsProvider)
+                .credentialsProvider(awsCredentialsProvider())
                 .region(Region.of(region))
                 .build();
     }
+
     @Bean
     public AwsCredentialsProvider awsCredentialsProvider() {
-        return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
+        return StaticCredentialsProvider.create(awsBasicCredentials());
+    }
+
+    @Bean
+    public AwsBasicCredentials awsBasicCredentials() {
+        return AwsBasicCredentials.create(accessKey, secretKey);
     }
 
     private AuthenticationWebFilter authenticationWebFilter(AuthenticationManager authenticationManager) {

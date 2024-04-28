@@ -1,13 +1,14 @@
 package com.vladkostromin.restapiapplication.service;
 
 import com.vladkostromin.restapiapplication.entity.EventEntity;
-import com.vladkostromin.restapiapplication.entity.FileEntity;
-import com.vladkostromin.restapiapplication.entity.UserEntity;
-import com.vladkostromin.restapiapplication.enums.Status;
+import com.vladkostromin.restapiapplication.enums.EventStatus;
 import com.vladkostromin.restapiapplication.repository.EventRepository;
+import com.vladkostromin.restapiapplication.repository.FileRepository;
+import com.vladkostromin.restapiapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -15,25 +16,33 @@ import java.time.LocalDateTime;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final FileRepository fileRepository;
+    private final UserRepository userRepository;
 
 
     public Mono<EventEntity> getEventById(Long id) {
-        eventRepository.findById(id).flatMap(event -> {
-            if(event.getStatus().equals(Status.INACTIVE)) {
-                return Mono.error(new RuntimeException());
-            }
-            return Mono.just(event);
-        });
-        return eventRepository.findById(id);
+        return eventRepository.findById(id)
+                .flatMap(eventEntity -> userRepository.findById(eventEntity.getUserId())
+                        .map(userEntity -> {
+                            eventEntity.setUser(userEntity);
+                            return eventEntity;
+                        })
+                        .flatMap(event -> fileRepository.findById(event.getFileId()))
+                .map(fileEntity -> {
+                    eventEntity.setFile(fileEntity);
+                    return eventEntity;
+                }));
     }
 
-    public Mono<EventEntity> createEvent(UserEntity user, FileEntity file) {
+    public Mono<EventEntity> createEvent(EventEntity eventEntity) {
         return eventRepository.save(EventEntity.builder()
-                        .user(user)
-                        .file(file)
+                        .user(eventEntity.getUser())
+                        .file(eventEntity.getFile())
+                        .userId(eventEntity.getUserId())
+                        .fileId(eventEntity.getFileId())
                         .createdAt(LocalDateTime.now())
-                        .updatedAt(null)
-                        .status(Status.ACTIVE)
+                        .updatedAt(LocalDateTime.now())
+                        .status(eventEntity.getStatus())
                 .build());
     }
 
@@ -42,14 +51,14 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public Mono<Void> deleteEvent(EventEntity event) {
-        return eventRepository.delete(event);
+    public Mono<Void> deleteEvent(Long eventId) {
+        return eventRepository.deleteById(eventId);
     }
 
     public Mono<EventEntity> safeDeleteEvent(Long id) {
         return eventRepository.findById(id)
                 .flatMap(event -> {
-                    event.setStatus(Status.INACTIVE);
+                    event.setStatus(EventStatus.DELETED);
                     return eventRepository.save(event);
                 });
     }

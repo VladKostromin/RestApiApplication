@@ -1,7 +1,9 @@
 package com.vladkostromin.restapiapplication.service;
 
+import com.vladkostromin.restapiapplication.dto.FileDto;
 import com.vladkostromin.restapiapplication.entity.FileEntity;
-import com.vladkostromin.restapiapplication.enums.Status;
+import com.vladkostromin.restapiapplication.enums.FileStatus;
+import com.vladkostromin.restapiapplication.mapper.FileMapper;
 import com.vladkostromin.restapiapplication.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,9 @@ import java.time.LocalDateTime;
 public class FileService {
 
     private final FileRepository fileRepository;
-
-    public Mono<FileEntity> getFileById(Long id) {
-        return fileRepository.findById(id);
+    private final FileMapper fileMapper;
+    public Mono<FileDto> getFileById(Long id) {
+        return fileRepository.findById(id).map(fileMapper::map);
     }
 
     public Mono<FileEntity> createFile(FileEntity file) {
@@ -25,10 +27,16 @@ public class FileService {
                         .fileName(file.getFileName())
                         .location(file.getLocation())
                         .createdAt(LocalDateTime.now())
-                        .updatedAt(null)
-                        .status(Status.ACTIVE)
+                        .updatedAt(LocalDateTime.now())
+                        .status(FileStatus.AVALABLE)
                 .build());
     }
+
+    public Mono<FileEntity> getFileByName(String fileName) {
+        return fileRepository.findByFileName(fileName);
+    }
+
+
 
     public Mono<Void> deleteFile(Long id) {
         return fileRepository.deleteById(id);
@@ -37,7 +45,7 @@ public class FileService {
     public Mono<FileEntity> safeDeleteFile(Long id) {
         return fileRepository.findById(id)
                 .flatMap(file -> {
-                    file.setStatus(Status.INACTIVE);
+                    file.setStatus(FileStatus.AVALABLE);
                     return fileRepository.save(file);
                 });
     }

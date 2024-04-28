@@ -2,7 +2,7 @@ package com.vladkostromin.restapiapplication.security;
 
 
 import com.vladkostromin.restapiapplication.entity.UserEntity;
-import com.vladkostromin.restapiapplication.enums.Status;
+import com.vladkostromin.restapiapplication.enums.UserStatus;
 import com.vladkostromin.restapiapplication.exception.InactiveException;
 import com.vladkostromin.restapiapplication.exception.IncorrectUsernamePasswordException;
 import com.vladkostromin.restapiapplication.service.UserService;
@@ -58,8 +58,11 @@ public class SecurityService {
     public Mono<TokenDetails> authenticate(String username, String password) {
         return userService.getUserByUsername(username)
                 .flatMap(user -> {
-                    if(user.getStatus().equals(Status.INACTIVE)) {
-                        return Mono.error(new InactiveException("User is disabled", "ERROR_CODE_INACTIVE"));
+                    if(user.getStatus().equals(UserStatus.DELETED)) {
+                        return Mono.error(new InactiveException("User is deleted", "ERROR_CODE_INACTIVE"));
+                    }
+                    if(user.getStatus().equals(UserStatus.BANNED)) {
+                        return Mono.error(new InactiveException("User is Banned", "ERROR_CODE_INACTIVE"));
                     }
                     if(!passwordEncoder.matches(password, user.getPassword())) {
                         return Mono.error(new IncorrectUsernamePasswordException("Username or password is incorrect", "ERROR_CODE_INCORRECT_PASSWORD"));

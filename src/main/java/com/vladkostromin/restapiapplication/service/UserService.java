@@ -1,8 +1,12 @@
 package com.vladkostromin.restapiapplication.service;
 
+import com.vladkostromin.restapiapplication.dto.UserDto;
+import com.vladkostromin.restapiapplication.entity.EventEntity;
 import com.vladkostromin.restapiapplication.entity.UserEntity;
 import com.vladkostromin.restapiapplication.enums.Role;
-import com.vladkostromin.restapiapplication.enums.Status;
+import com.vladkostromin.restapiapplication.enums.UserStatus;
+import com.vladkostromin.restapiapplication.mapper.UserMapper;
+import com.vladkostromin.restapiapplication.repository.EventRepository;
 import com.vladkostromin.restapiapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,17 +15,27 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Mono<UserEntity> getUserById(Long id) {
-        return userRepository.findById(id);
+    private final UserMapper userMapper;
+
+    public Mono<UserDto> getUserById(Long id) {
+        return Mono.zip(userRepository.findById(id),
+                eventRepository.findAllByUserId(id).collectList())
+                .map(tuples -> {
+                    UserEntity user = tuples.getT1();
+                    List<EventEntity> events = tuples.getT2();
+                    user.setEvents(events);
+                    return userMapper.map(user);
+                });
     }
 
     public Mono<UserEntity> getUserByUsername(String username) {
@@ -36,9 +50,9 @@ public class UserService {
                         .lastName(user.getLastName())
                         .email(user.getEmail())
                         .role(Role.USER)
-                        .status(Status.ACTIVE)
+                        .status(UserStatus.ACTIVE)
                         .createdAt(LocalDateTime.now())
-                        .updatedAt(null)
+                        .updatedAt(LocalDateTime.now())
                         .events(new ArrayList<>())
                         .build()
         );
@@ -51,7 +65,7 @@ public class UserService {
         return userRepository
                 .findById(id)
                 .flatMap(userEntity -> {
-                    userEntity.setStatus(Status.INACTIVE);
+                    userEntity.setStatus(UserStatus.DELETED);
                     return userRepository.save(userEntity);
                 });
     }

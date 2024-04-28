@@ -13,13 +13,16 @@ public enum Role {
     ADMIN(Set.of(Permission.ADMIN_UPLOAD,
             Permission.ADMIN_DOWNLOAD,
             Permission.ADMIN_DELETE,
-            Permission.ADMIN_UPDATE)),
+            Permission.ADMIN_UPDATE,
+            Permission.ADMIN_READ)),
     MODERATOR(Set.of(Permission.MODERATOR_UPDATE,
             Permission.MODERATOR_UPLOAD,
             Permission.MODERATOR_DELETE,
-            Permission.MODERATOR_DOWNLOAD)),
+            Permission.MODERATOR_DOWNLOAD,
+            Permission.MODERATOR_READ)),
     USER(Set.of(Permission.USER_UPLOAD,
-            Permission.USER_DOWNLOAD))
+            Permission.USER_DOWNLOAD,
+            Permission.USER_READ))
     ;
 
     private final Set<Permission> permissions;

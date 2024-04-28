@@ -1,11 +1,11 @@
 package com.vladkostromin.restapiapplication.entity;
 
-import com.vladkostromin.restapiapplication.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 public class BaseEntity {
     @Id
     private Long id;
+    @Column("created_at")
     private LocalDateTime createdAt;
+    @Column("updated_at")
     private LocalDateTime updatedAt;
-    private Status status;
 }
