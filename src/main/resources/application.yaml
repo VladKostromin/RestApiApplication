@@ -14,8 +14,12 @@ spring:
 jwt:
   secret: stjgJYvZsQjkH69IX2prakSSIgd0Iygi
   expiration: 4000
+
 aws:
-  accessKey:
-  secretKey:
-  region: CENTRAL_EU_1
+  credentials:
+    accessKey: AKIAVRUVRQESJVDVQUWG
+    secretKey: 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
   bucket:
+    name: com.vladkostromin.s3app.bucket
+    region: eu-central-1
+  localFolder: src/main/resources/download/

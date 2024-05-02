@@ -1,12 +1,9 @@
 package com.vladkostromin.restapiapplication.service;
 
-import com.vladkostromin.restapiapplication.dto.UserDto;
 import com.vladkostromin.restapiapplication.entity.EventEntity;
 import com.vladkostromin.restapiapplication.entity.UserEntity;
 import com.vladkostromin.restapiapplication.enums.Role;
 import com.vladkostromin.restapiapplication.enums.UserStatus;
-import com.vladkostromin.restapiapplication.mapper.UserMapper;
-import com.vladkostromin.restapiapplication.repository.EventRepository;
 import com.vladkostromin.restapiapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,19 +19,17 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final EventRepository eventRepository;
+    private final EventService eventService;
     private final PasswordEncoder passwordEncoder;
 
-    private final UserMapper userMapper;
-
-    public Mono<UserDto> getUserById(Long id) {
+    public Mono<UserEntity> getUserById(Long id) {
         return Mono.zip(userRepository.findById(id),
-                eventRepository.findAllByUserId(id).collectList())
+                eventService.getAllEventsByUserId(id).collectList())
                 .map(tuples -> {
                     UserEntity user = tuples.getT1();
                     List<EventEntity> events = tuples.getT2();
                     user.setEvents(events);
-                    return userMapper.map(user);
+                    return user;
                 });
     }
 

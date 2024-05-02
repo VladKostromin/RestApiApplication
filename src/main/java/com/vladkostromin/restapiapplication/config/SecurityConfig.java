@@ -3,7 +3,6 @@ package com.vladkostromin.restapiapplication.config;
 import com.vladkostromin.restapiapplication.security.AuthenticationManager;
 import com.vladkostromin.restapiapplication.security.BearerTokenServerAuthenticationConverter;
 import com.vladkostromin.restapiapplication.security.JwtHandler;
-import com.vladkostromin.restapiapplication.service.AWSS3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

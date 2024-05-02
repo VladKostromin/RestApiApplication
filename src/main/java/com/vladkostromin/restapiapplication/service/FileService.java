@@ -16,9 +16,10 @@ import java.time.LocalDateTime;
 public class FileService {
 
     private final FileRepository fileRepository;
-    private final FileMapper fileMapper;
-    public Mono<FileDto> getFileById(Long id) {
-        return fileRepository.findById(id).map(fileMapper::map);
+
+
+    public Mono<FileEntity> getFileById(Long id) {
+        return fileRepository.findById(id);
     }
 
     public Mono<FileEntity> createFile(FileEntity file) {
@@ -45,7 +46,7 @@ public class FileService {
     public Mono<FileEntity> safeDeleteFile(Long id) {
         return fileRepository.findById(id)
                 .flatMap(file -> {
-                    file.setStatus(FileStatus.AVALABLE);
+                    file.setStatus(FileStatus.REMOVED);
                     return fileRepository.save(file);
                 });
     }

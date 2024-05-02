@@ -7,6 +7,7 @@ import com.vladkostromin.restapiapplication.entity.FileEntity;
 import com.vladkostromin.restapiapplication.entity.UserEntity;
 import com.vladkostromin.restapiapplication.enums.EventStatus;
 import com.vladkostromin.restapiapplication.mapper.FileMapper;
+import com.vladkostromin.restapiapplication.mapper.UserMapper;
 import com.vladkostromin.restapiapplication.service.AWSS3Service;
 import com.vladkostromin.restapiapplication.service.EventService;
 import com.vladkostromin.restapiapplication.service.FileService;
@@ -27,6 +28,7 @@ public class UserController {
     private final AWSS3Service awss3Service;
     private final FileService fileService;
     private final EventService eventService;
+    private final UserMapper userMapper;
 
 
     private final FileMapper fileMapper;
@@ -34,7 +36,7 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('admin:read', 'moderator:read')")
     public Mono<UserDto> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+        return userService.getUserById(id).map(userMapper::map);
     }
 
     @PostMapping("/upload")

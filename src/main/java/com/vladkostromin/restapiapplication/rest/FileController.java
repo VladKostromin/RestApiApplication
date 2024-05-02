@@ -21,7 +21,7 @@ public class FileController {
     @GetMapping("/get/{id}")
     @PreAuthorize("hasAnyAuthority('admin:read', 'moderator:read')")
     public Mono<FileDto> getFile(@PathVariable Long id) {
-        return fileService.getFileById(id);
+        return fileService.getFileById(id).map(fileMapper::map);
     }
     @PostMapping("/create/{id}")
     @PreAuthorize("hasAuthority('admin:update')")

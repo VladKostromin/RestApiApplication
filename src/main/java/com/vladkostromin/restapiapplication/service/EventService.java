@@ -7,6 +7,7 @@ import com.vladkostromin.restapiapplication.repository.FileRepository;
 import com.vladkostromin.restapiapplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -53,6 +54,10 @@ public class EventService {
 
     public Mono<Void> deleteEvent(Long eventId) {
         return eventRepository.deleteById(eventId);
+    }
+
+    public Flux<EventEntity> getAllEventsByUserId(Long userId) {
+        return eventRepository.findAllByUserId(userId);
     }
 
     public Mono<EventEntity> safeDeleteEvent(Long id) {
