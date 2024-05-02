@@ -4,12 +4,12 @@ server:
 spring:
   r2dbc:
     url: r2dbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
-    username: root
-    password: qaz923923
+    username: user
+    password: password
   flyway:
     url: jdbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
-    user: root
-    password: qaz923923
+    user: user
+    password: password
     locations: db/migration
 jwt:
   secret: stjgJYvZsQjkH69IX2prakSSIgd0Iygi
