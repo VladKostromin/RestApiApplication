@@ -15,5 +15,7 @@ public class EventDto extends BaseDto {
 
     private UserDto user;
     private FileDto file;
-    private EventStatus eventStatus;
+    private EventStatus status;
+    private Long userId;
+    private Long fileId;
 }

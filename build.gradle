@@ -47,7 +47,7 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:$amazonSdk"))
     implementation("software.amazon.awssdk:s3")
 
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
+    testImplementation 'org.mockito:mockito-core:3.6.28'
 
 }
 

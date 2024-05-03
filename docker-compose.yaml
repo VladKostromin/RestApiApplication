@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0.37
+    environment:
+      MYSQL_ROOT_PASSWORD: qaz923923
+      MYSQL_DATABASE: restapiapp
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - backend
+
+  restapi-application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    networks:
+      - backend
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: r2dbc:mysql://db:3306/restapiapp?serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: qaz923923
+      SPRING_FLYWAY_URL: jdbc:mysql://db:3306/restapiapp?serverTimezone=UTC
+      SPRING_FLYWAY_USER: root
+      SPRING_FLYWAY_PASSWORD: qaz923923
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  backend:
+
+volumes:
+  db-data:

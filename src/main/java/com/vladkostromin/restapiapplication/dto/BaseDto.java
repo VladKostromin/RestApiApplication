@@ -16,4 +16,8 @@ public class BaseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long id;
+
+
+
+
 }
