@@ -17,9 +17,9 @@ jwt:
 
 aws:
   credentials:
-    accessKey: AKIAVRUVRQESJVDVQUWG
-    secretKey: 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
+    accessKey: *****
+    secretKey: *****
   bucket:
-    name: com.vladkostromin.s3app.bucket
-    region: eu-central-1
+    name: bucket
+    region: region
   localFolder: src/main/resources/download/
