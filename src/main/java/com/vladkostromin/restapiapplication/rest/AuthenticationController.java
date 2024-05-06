@@ -5,7 +5,7 @@ import com.vladkostromin.restapiapplication.dto.authdto.AuthRequestDto;
 import com.vladkostromin.restapiapplication.dto.authdto.AuthResponseDto;
 import com.vladkostromin.restapiapplication.entity.UserEntity;
 import com.vladkostromin.restapiapplication.mapper.UserMapper;
-import com.vladkostromin.restapiapplication.security.SecurityService;
+import com.vladkostromin.restapiapplication.service.SecurityService;
 import com.vladkostromin.restapiapplication.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

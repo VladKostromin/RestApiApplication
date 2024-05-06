@@ -1,11 +1,11 @@
-package com.vladkostromin.restapiapplication.security;
+package com.vladkostromin.restapiapplication.service;
 
 
 import com.vladkostromin.restapiapplication.entity.UserEntity;
 import com.vladkostromin.restapiapplication.enums.UserStatus;
 import com.vladkostromin.restapiapplication.exception.InactiveException;
-import com.vladkostromin.restapiapplication.exception.IncorrectUsernamePasswordException;
-import com.vladkostromin.restapiapplication.service.UserService;
+import com.vladkostromin.restapiapplication.exception.UsernamePasswordException;
+import com.vladkostromin.restapiapplication.security.TokenDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -65,7 +65,7 @@ public class SecurityService {
                         return Mono.error(new InactiveException("User is Banned", "ERROR_CODE_INACTIVE"));
                     }
                     if(!passwordEncoder.matches(password, user.getPassword())) {
-                        return Mono.error(new IncorrectUsernamePasswordException("Username or password is incorrect", "ERROR_CODE_INCORRECT_PASSWORD"));
+                        return Mono.error(new UsernamePasswordException("Username or password is incorrect", "ERROR_CODE_INCORRECT_PASSWORD"));
                     }
                     return Mono.just(createToken(user));
                 })

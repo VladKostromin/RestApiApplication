@@ -23,7 +23,6 @@ services:
       - backend
     depends_on:
       - db
-    restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: r2dbc:mysql://db:3306/restapiapp?serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root

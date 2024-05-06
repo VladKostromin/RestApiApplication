@@ -1,0 +1,59 @@
+package com.vladkostromin.restapiapplication.errorhandling;
+
+import com.vladkostromin.restapiapplication.exception.*;
+import io.jsonwebtoken.MalformedJwtException;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+
+import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+@Component
+public class AppErrorAttributes extends DefaultErrorAttributes {
+
+    private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    public AppErrorAttributes() {
+        super();
+    }
+
+    @Override
+    public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
+        Map<String, Object> errorAttributes = super.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        Throwable error = getError(request);
+
+        List<Map<String, Object>> errorList = new ArrayList<>();
+
+        if (error instanceof UnauthorizedException || error instanceof SignatureException || error instanceof MalformedJwtException) {
+            status = HttpStatus.UNAUTHORIZED;
+            LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
+            errorDetails.put("code", ((ApiException) error).getErrorCode());
+            errorDetails.put("message", error.getMessage());
+            errorList.add(errorDetails);
+        } else if(error instanceof ApiException) {
+            status = HttpStatus.BAD_REQUEST;
+            LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
+            errorDetails.put("code", ((ApiException) error).getErrorCode());
+            errorDetails.put("message", error.getMessage());
+            errorList.add(errorDetails);
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            String message = error.getMessage();
+            if(message == null) {
+                message = error.getClass().getName();
+            }
+            LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
+            errorDetails.put("code", "INTERNAL_ERROR");
+            errorDetails.put("message", message);
+            errorList.add(errorDetails);
+        }
+        return errorAttributes;
+    }
+}
