@@ -1,19 +1,16 @@
 package com.vladkostromin.restapiapplication.errorhandling;
 
 import com.vladkostromin.restapiapplication.exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class AppErrorAttributes extends DefaultErrorAttributes {
@@ -31,7 +28,7 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
 
         List<Map<String, Object>> errorList = new ArrayList<>();
 
-        if (error instanceof UnauthorizedException || error instanceof SignatureException || error instanceof MalformedJwtException) {
+        if (error instanceof UnauthorizedException) {
             status = HttpStatus.UNAUTHORIZED;
             LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
             errorDetails.put("code", ((ApiException) error).getErrorCode());
@@ -49,11 +46,16 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
             if(message == null) {
                 message = error.getClass().getName();
             }
-            LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
-            errorDetails.put("code", "INTERNAL_ERROR");
-            errorDetails.put("message", message);
-            errorList.add(errorDetails);
+                LinkedHashMap<String, Object> errorDetails = new LinkedHashMap<>();
+                errorDetails.put("code", "INTERNAL_ERROR");
+                errorDetails.put("message", message);
+                errorList.add(errorDetails);
         }
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("errors", errorList);
+        errorAttributes.put("status", status.value());
+        errorAttributes.put("errors", errorDetails);
+
         return errorAttributes;
     }
 }

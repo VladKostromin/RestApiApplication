@@ -3,11 +3,11 @@ server:
 
 spring:
   r2dbc:
-    url: r2dbc:mysql://db:3306/restapiapp?serverTimezone=UTC
+    url: r2dbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
     username: root
     password: qaz923923
   flyway:
-    url: jdbc:mysql://db:3306/restapiapp?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/restapiapp?serverTimezone=UTC
     user: root
     password: qaz923923
     locations: db/migration
@@ -17,9 +17,9 @@ jwt:
 
 aws:
   credentials:
-    accessKey: *****
-    secretKey: *****
+    accessKey: g
+    secretKey: g
   bucket:
     name: bucket
     region: region
-  localFolder: src/main/resources/download/
+  localFolder: some-folder
